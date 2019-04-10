@@ -76,6 +76,14 @@ function createComment(content) {
 
 // Delete a comment from db and remove from list
 function deleteComment(id) {
+  const comment = document.querySelector(`[data-id="comment-${id}"]`)
+  //console.dir(comment)
+
+  // Disable delete button first so they can't spam click it 
+  // and do a bunch of delete requests
+  // Then when delete is confirmed on server, remove the whole comment
+  comment.children[0].setAttribute('disabled', true) // firstChild == childNodes[0] != children[0]
+
   fetch(commentsURL + id, {
     method: 'DELETE',
     headers: {
@@ -87,9 +95,13 @@ function deleteComment(id) {
    .then(data => {
       // If comment successfully destroyed in db, remove comment from list
       if (data.message) 
-        document.querySelector(`[data-id="comment-${id}"]`).remove()
-      else 
+        comment.remove()
+      else {
         console.error("Unable to delete comment.")
+        
+        // Comment deletion failed so we need to bring back the button
+        comment.firstChild.setAttribute('disabled', false)
+      }
    })
 }
 
@@ -106,6 +118,12 @@ const handleFormSubmit = (e) => {
 
   // Get comment content from input
   const content = e.target.elements["comment"].value
+
+  if (content === "") {
+    alert("Form cannot be blank!")
+    return 
+  }
+
   createComment(content)
 }
 
