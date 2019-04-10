@@ -1,0 +1,13 @@
+input {
+  font-size: 2rem;
+}
+
+li {
+  height: 30px;
+}
+
+.del-btn {
+  font-size: 10px;
+  color: red;
+  margin-left: 3px;
+}
